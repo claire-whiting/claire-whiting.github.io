@@ -3,18 +3,34 @@ project:
   output-dir: docs
 
 website:
-  title: "Website"
+  title: "Claire Whiting"
   navbar:
+    title: false
     right:
-      - about.qmd
+      - href: index.qmd
+        text: Home
+      - text: CV
+        file: cv.pdf
+      - posts.qmd
       - icon: github
-        href: https://github.com/
+        href: https://github.com/claire-whiting
       - icon: twitter
         href: https://twitter.com/claire_whiting
+  page-footer: 
+    background: light
+    left: 
+      - icon: github
+        href: https://github.com/claire-whiting
+      - icon: twitter
+        href: https://twitter.com/claire_whiting
+
 format:
   html:
-    theme: cosmo
-    css: styles.css
+    page-layout: full
+    theme: greenstyle.css
+    mainfont: Poppins
+    toc: true
 
 editor: visual
+
 

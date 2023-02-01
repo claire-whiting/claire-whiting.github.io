@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Claire Whiting",
-    "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nFeb 1, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nNew Post\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nFeb 1, 2023\n\n\nClaire Whiting\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJan 29, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "posts/post-with-code/index.html",
     "href": "posts/post-with-code/index.html",
     "title": "Post With Code",
@@ -28,8 +21,36 @@
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Claire Whiting",
+    "section": "",
+    "text": "I’m a first-year Psychology PhD student, working with the Logic of Emotion Lab at Princeton University.\nMy research focuses on understanding our experience of emotions, including how we identify and regulate our emotions, and the factors influencing these processes. I’m also interested in how our use of language can help us regulate our emotions. In a broader sense, I care about improving our understanding of the psychological and neural mechanisms underpinning mental health and using this to inform prevention and treatment strategies."
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "posts.html",
+    "href": "posts.html",
+    "title": "My Blog",
+    "section": "",
+    "text": "Post With Code\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nHarlow Malloc\n\n\nFeb 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNew Post\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nClaire Whiting\n\n\nFeb 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nTristan O’Malley\n\n\nJan 29, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about/about.html",
+    "href": "about/about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "home/about.html",
+    "href": "home/about.html",
     "title": "About",
     "section": "",
     "text": "About this blog"

@@ -1,12 +1,26 @@
 ---
-title: "Claire Whiting"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
 page-layout: full
 title-block-banner: true
+image: me.jpeg
+about:
+  template: trestles
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/claire_whiting
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/clairewhiting
+    - icon: github
+      text: Github
+      href: https://github.com/claire-whiting
+    - icon: envelope
+      text: E-mail
+      href: mailto:claire.whiting@princeton.edu
 ---
+
+## Hello!
+
+<p class="topbr">I'm a first-year Psychology PhD student, working with the [Logic of Emotion Lab](https://www.google.com/url?q=https%3A%2F%2Flemolab.princeton.edu&sa=D&sntz=1&usg=AOvVaw1DHeiAmd0pR-Ls0qXvKC8Q) at Princeton University.
+
+My research focuses on understanding our experience of emotions, including how we identify and regulate our emotions, and the factors influencing these processes. I'm also interested in how our use of language can help us regulate our emotions. In a broader sense, I care about improving our understanding of the psychological and neural mechanisms underpinning mental health and using this to inform prevention and treatment strategies.</p>
