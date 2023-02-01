@@ -5,27 +5,27 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins');
 
 // Colors
-$light-sage-green: #D1D9CE;
+$light-light-orange: #d5ced9;
 $dark-sage-green: #98A08D;
 $cream: #FDFBF7;
 $gray: #64605f;
 $light-gray: #949799;
-$purple: #AE8BD1;
+$light-orange: #d6a37c;
 $black: #000000;
 $burnt-orange: #ad7237;
 
 // Base document colors
 $navbar-bg: $cream;
 $navbar-fg: $dark-sage-green; 
-$navbar-hl: $purple; 
-$body-bg: $light-sage-green;
+$navbar-hl: $light-orange; 
+$body-bg: $light-light-orange;
 $body-color: $gray;
 $footer-bg: $cream; 
-$link-color: $purple;
+$link-color: $light-orange;
 
 // Inline code
 $code-bg: $cream;
-$code-color: $burnt-orange; //$purple; 
+$code-color: $burnt-orange; //$light-orange; 
 
 // Code blocks
 $code-block-bg: $cream;
@@ -76,7 +76,7 @@ body {
 }
 
 .button-styling {
-  background: $light-sage-green;
+  background: $light-light-orange;
   border-color: $gray;
   color: $gray;
   border-radius: 0.6rem;
