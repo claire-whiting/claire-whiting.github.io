@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: me.jpeg
+image: Me.jpeg
 about:
   template: trestles
   links:
