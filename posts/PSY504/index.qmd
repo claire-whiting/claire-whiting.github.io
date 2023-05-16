@@ -1,6 +1,8 @@
-project:
-  type: website
-  output-dir: docs
+---
+title: "PSY504"
+author: "Claire Whiting"
+date: "2023-05-16"
+categories: [R]
 
 website:
   title: "Claire Whiting"
@@ -25,14 +27,10 @@ website:
         href: https://twitter.com/claire_whiting
       - icon: envelope
         href: mailto:claire.whiting@princeton.edu
+---
 
-format:
-  html:
-    page-layout: full
-    theme: style.css
-    mainfont: Poppins
-    toc: true
+This is the first post in a Quarto blog. Welcome!
 
-editor: visual
+![](thumbnail.jpg)
 
-
+Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
