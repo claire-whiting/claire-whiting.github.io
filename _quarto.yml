@@ -23,6 +23,8 @@ website:
         href: https://github.com/claire-whiting
       - icon: twitter
         href: https://twitter.com/claire_whiting
+      - icon: envelope
+        href: mailto:claire.whiting@princeton.edu
 
 format:
   html:
