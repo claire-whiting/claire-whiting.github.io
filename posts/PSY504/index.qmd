@@ -273,7 +273,7 @@ set.seed(123)
 This gives us the following output:
 
 ```{r}
-summary(results)
+#summary(results)
 ```
 
 **ACME** stands for *average causal mediation effects*. This is the indirect, or mediation, effect of the IV on the DV. From this, we can see whether we have a significant mediation effect or not. Here, *p* \< .001, so we can conclude that linguistic distance does mediate the effect of Condition on affect change. Note that the mediation effect estimate = **path a** \* **path b,** the values of which we found previously (0.06 = 0.40 \* 0.15).

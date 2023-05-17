@@ -562,33 +562,48 @@ Alternative hypothesis: two.sided</code></pre>
 <p>We now have two extra columns (affect_change_z and psychdist_z) which contain the standardized values of psychdist and affect_change, respectively.</p>
 <p>For the mediation, we will use the <span style="color:blue;">mediation</span> package. We need to define <strong>3</strong> linear regression models:</p>
 <ol type="1">
-<li>Total Effect:</li>
+<li>Total Effect: DV ~ IV</li>
 </ol>
+<p>This will give us the the estimate for the <strong>path c</strong> or the <strong>total effect</strong>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(DV <span class="sc">~</span> IV)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fit.totaleffect <span class="ot">=</span> <span class="fu">lm</span>(affect_change_z <span class="sc">~</span> Condition, data)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.totaleffect)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<ol start="2" type="1">
+<li>Effect of IV on Mediator: M ~ IV</li>
+</ol>
+<p>This will give us the estimate for <strong>path a</strong>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mediation analysis</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fit.totaleffect <span class="ot">=</span> <span class="fu">lm</span>(affect_change_z <span class="sc">~</span> Condition, data)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.totaleffect) </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>fit.mediator <span class="ot">=</span>  <span class="fu">lm</span>(psychdist_z <span class="sc">~</span> Condition, data)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.mediator) </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>fit.dv <span class="ot">=</span> <span class="fu">lm</span>(affect_change_z <span class="sc">~</span> Condition <span class="sc">+</span> psychdist_z, data)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.dv)</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(results)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit.mediator <span class="ot">=</span>  <span class="fu">lm</span>(psychdist_z <span class="sc">~</span> Condition, data)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.mediator)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<ol start="3" type="1">
+<li>Effect of Mediator on DV, while controlling for IV: DV ~ IV + Mediator</li>
+</ol>
+<p>This will give us the estimate for the direct effect of the IV on the DV, as well as <strong>path b</strong> of the mediation model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exploring word count</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(WC <span class="sc">~</span> Condition, <span class="at">data=</span>data) </span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cohensD</span>(WC <span class="sc">~</span> Condition, <span class="at">data=</span>data)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(affect_change <span class="sc">~</span> WC<span class="sc">*</span>Condition, <span class="at">data=</span>data)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fit.dv <span class="ot">=</span> <span class="fu">lm</span>(affect_change_z <span class="sc">~</span> Condition <span class="sc">+</span> psychdist_z, data)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.dv)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we can run the mediation analysis using the <span style="color:blue;">mediatio</span> function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This gives us the following output:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(results)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>ACME</strong> stands for <em>average causal mediation effects</em>. This is the indirect, or mediation, effect of the IV on the DV. From this, we can see whether we have a significant mediation effect or not. Here, <em>p</em> &lt; .001, so we can conclude that linguistic distance does mediate the effect of Condition on affect change. Note that the mediation effect estimate = <strong>path a</strong> * <strong>path b,</strong> the values of which we found previously (0.06 = 0.40 * 0.15).</p>
+<p><strong>ADE</strong> stands for <em>average direct effects</em>. This estimate is the effect of the IV on the DV, once we have controlled for the mediator. You can see that this estimate is equal to that found in <strong>regression 3</strong>.</p>
+<p><strong>Total Effect</strong> equals the sum of the direct and indirect effects of the IV on the DV. This is what we found in <strong>regression 1.</strong></p>
+<p><strong>Prop. Mediated</strong> gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1 because the directions of the</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exloring word count</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(WC <span class="sc">~</span> Condition, <span class="at">data=</span>data) </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cohensD</span>(WC <span class="sc">~</span> Condition, <span class="at">data=</span>data)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(affect_change <span class="sc">~</span> WC<span class="sc">*</span>Condition, <span class="at">data=</span>data)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
