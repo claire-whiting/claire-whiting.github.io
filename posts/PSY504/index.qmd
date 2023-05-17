@@ -1,6 +1,8 @@
 ---
-title: "PSY504"
-descripton: "A guide to mediation analysis in R."
+title: "Mediation Analysis in R"
+execute:
+  output: false
+descripton: "PSY504 Final Project"
 author: "Claire Whiting"
 date: "2023-05-16"
 categories: [R]
@@ -30,8 +32,180 @@ website:
         href: mailto:claire.whiting@princeton.edu
 ---
 
-A Guide to Mediation Analysis in R
+### Intro
 
-![](thumbnail.jpg)
+Here, I'll provide a walkthrough of a mediation analysis, along with some initial statistical tests. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success.
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+These are the 4 questions we wanted to test:
+
+1.  Does linguistic distancing differ by condition?
+2.  Is linguistic distancing correlated with affect change?
+3.  Does affect change differ by condition?
+4.  Does linguistic distancing mediate the association between condition and affect change?
+
+### Environment set-up
+
+First, lets load in all the packages we need. If you don't have a package installed, you can run [install_packages('packagename')]{style="color:blue;"}
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(lsr)
+library(ggplot2)
+library(mediation)
+library(datawizard)
+```
+
+Next, load in your data.
+
+```{r}
+data <- read_csv("data.csv")
+```
+
+My data contains the following variables:
+
+I**D**: Participant ID
+
+**Condition**: 0 for control group, 1 for distanced group
+
+**Duration_minutes**: Number of minutes taken to complete task
+
+**psychdist**: Score for linguistic distance
+
+**affect_change**: Change in affect from pre- to post-reappraisal
+
+**WC**: Total word count for reappraisal response
+
+```{r}
+#| code-fold: true
+#| output: true
+head(data) %>%
+  kable()
+```
+
+### Question 1. Does linguistic distancing differ by condition?
+
+```{r}
+# Does linguistic distancing differ by condition?
+t.test(psychdist ~ Condition, data=data)
+cohensD(psychdist ~ Condition, data=data)
+```
+
+```{r}
+#| output: true
+lingdist_msd <- data %>%     # Mean, sd, se, CI_lower, CI_upper
+  dplyr::select(ID, Condition, psychdist) %>%
+  na.omit() %>%
+  group_by(Condition) %>%
+  summarize(mean = mean(psychdist),
+            sd = sd(psychdist),
+            se = sd / sqrt(n()),
+            CI_lower = mean - (1.96 * se),
+            CI_upper = mean + (1.96 * se)) %>%
+  mutate(Condition = as.factor(Condition))
+
+
+ggplot(lingdist_msd, aes(x=Condition, y=mean)) + 
+  geom_bar(position=position_dodge(), stat="identity",
+           fill="#4b5e9c") +
+  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) +
+  scale_x_discrete(labels=c('Control', 
+                            'Distanced')) +
+  coord_cartesian(ylim=c(-0.2, 0.2)) +
+  ylab("Mean Linguistic Distance") + xlab("") +
+  theme_light(base_size=20)
+```
+
+### Question 2. Is linguistic distancing correlated with affect change?
+
+```{r}
+# Is lingusitic distancing correlated with affect change?
+cor.test(data$psychdist, data$affect_change)
+
+ggplot(data, aes(x=psychdist, y=affect_change)) + 
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm") +
+  xlab("Linguistic Distance") + ylab("Affect Change") +
+  theme_light(base_size=30)
+
+```
+
+### Question 3. Does affect change differ by condition?
+
+```{r}
+# Does affect change differ by condition?
+
+t.test(affect_change ~ Condition, data=data)
+
+```
+
+```{r}
+#| output: true
+#| #| code-fold: true
+affect_change_msd <- data %>%
+  dplyr::select(ID, Condition, affect_change) %>%
+  rename(Change = affect_change) %>%    # Mean, sd, se, CI_lower, CI_upper
+  group_by(Condition) %>%
+  summarize(mean = mean(Change),
+            sd = sd(Change),
+            se = sd / sqrt(n()),
+            CI_lower = mean - (1.96 * se),
+            CI_upper = mean + (1.96 * se)) %>%
+  mutate(Condition = as.factor(Condition))
+
+ggplot(affect_change_msd, aes(x=Condition, y=mean)) + 
+  geom_bar(position=position_dodge(), stat="identity",
+           fill="#4b5e9c") +
+  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) +
+  scale_x_discrete(labels=c('Control', 
+                            'Distanced')) +
+  coord_cartesian(ylim=c(0,70)) +
+  ylab("Mean Affect Change") + xlab("") +
+  theme_light(base_size=20)
+
+```
+
+### Question 4. Does linguistic distancing mediate the association between condition and affect change? 
+
+```{r}
+# Create standardized variables
+data <- data %>% 
+  mutate(affect_change_z = datawizard::standardize(affect_change),
+         psychdist_z = datawizard::standardize(psychdist))
+
+```
+
+```{r}
+#| code-fold: true
+#| output: true
+head(data) %>%
+  kable()
+```
+
+```{r}
+# Mediation analysis
+
+fit.totaleffect = lm(affect_change_z ~ Condition, data)
+summary(fit.totaleffect) 
+
+fit.mediator =  lm(psychdist_z ~ Condition, data)
+summary(fit.mediator) 
+
+fit.dv = lm(affect_change_z ~ Condition + psychdist_z, data)
+summary(fit.dv)
+
+set.seed(123)
+#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")
+#summary(results)
+```
+
+```{r}
+
+# Exploring word count
+
+t.test(WC ~ Condition, data=data) 
+cohensD(WC ~ Condition, data=data)
+summary(lm(affect_change ~ WC*Condition, data=data)) 
+
+```
