@@ -43,6 +43,8 @@ These are the 4 questions we wanted to test:
 3.  Does affect change differ by condition?
 4.  Does linguistic distancing mediate the association between condition and affect change?
 
+\[image of mediation model\]
+
 ### Environment set-up
 
 First, lets load in all the packages we need. If you don't have a package installed, you can run [install_packages('packagename')]{style="color:blue;"}
@@ -50,11 +52,13 @@ First, lets load in all the packages we need. If you don't have a package instal
 ```{r}
 library(tidyverse)
 library(dplyr)
-library(knitr)
 library(lsr)
-library(ggplot2)
 library(mediation)
 library(datawizard)
+library(report)
+library(knitr) # For nice tables
+library(kableExtra) # For nice tables
+library(ggplot2) # For nice plots
 ```
 
 Next, load in your data.
@@ -86,11 +90,25 @@ head(data) %>%
 
 ### Question 1. Does linguistic distancing differ by condition?
 
+We can use a t-test to find out whether the linguistic distancing manipulation worked as expected i.e., whether the distanced group had higher distancing scores compared to the control group. The effect size can be measured using the Cohen's d statistic.
+
 ```{r}
 # Does linguistic distancing differ by condition?
 t.test(psychdist ~ Condition, data=data)
 cohensD(psychdist ~ Condition, data=data)
 ```
+
+```{r}
+#| code-fold: true
+#| output: true
+t.test(psychdist ~ Condition, data=data) %>%
+  report_table() %>%
+  summary()
+```
+
+There is a significant difference between the two groups, *p* \< .001, d = .42.
+
+We can visualize this difference using a bar plot. Here, I first calcualate the 95% confidence intervals, so we can show these on the plot. Then I use [ggplot]{style="color:blue;"} to create the plot - take a look at the comments to see what each line of code is doing.
 
 ```{r}
 #| output: true
@@ -109,7 +127,7 @@ lingdist_msd <- data %>%
 ggplot(lingdist_msd, aes(x=Condition, y=mean)) + # Input variables
   geom_bar(position=position_dodge(), stat="identity", # Add bars
            fill="#4b5e9c") +
-  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) + # Add error bars
+  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) + # Add CI bars
   scale_x_discrete(labels=c('Control', 
                             'Distanced')) + # Rename x axis labels
   coord_cartesian(ylim=c(-0.2, 0.2)) + # Set y axis limits
@@ -119,15 +137,30 @@ ggplot(lingdist_msd, aes(x=Condition, y=mean)) + # Input variables
 
 ### Question 2. Is linguistic distancing correlated with affect change?
 
-```{r}
-# Is lingusitic distancing correlated with affect change?
-cor.test(data$psychdist, data$affect_change)
+We can use a Pearson's correlation test to answer this question. Note, this analysis is across all participants.
 
-ggplot(data, aes(x=psychdist, y=affect_change)) + 
-  geom_point(alpha=0.5) +
-  geom_smooth(method="lm") +
-  xlab("Linguistic Distance") + ylab("Affect Change") +
-  theme_light(base_size=30)
+```{r}
+cor.test(data$psychdist, data$affect_change)
+```
+
+```{r}
+#| code-fold: true
+#| output: true
+cor.test(data$psychdist, data$affect_change) %>%
+  report_table()
+```
+
+These results show that there is a significant positive correlation between linguistic distancing and affect change, *p* < .001.
+
+We can plot the correlation with a scatterplot, again using [ggplot]{style="color:blue;"}.
+
+```{r}
+#| output: true
+ggplot(data, aes(x=psychdist, y=affect_change)) + # Input variables
+  geom_point(alpha=0.5) + # Add points/dots
+  geom_smooth(method="lm") + # Add regression line
+  xlab("Linguistic Distance") + ylab("Affect Change") + # Axes labels
+  theme_light(base_size=20) # Theme and font size
 
 ```
 
@@ -142,7 +175,7 @@ t.test(affect_change ~ Condition, data=data)
 
 ```{r}
 #| output: true
-#| #| code-fold: true
+#| code-fold: true
 affect_change_msd <- data %>%
   dplyr::select(ID, Condition, affect_change) %>%
   rename(Change = affect_change) %>%
@@ -166,7 +199,7 @@ ggplot(affect_change_msd, aes(x=Condition, y=mean)) +
 
 ```
 
-### Question 4. Does linguistic distancing mediate the association between condition and affect change? 
+### Question 4. Does linguistic distancing mediate the association between condition and affect change?
 
 ```{r}
 # Create standardized variables
@@ -178,7 +211,7 @@ data <- data %>%
 
 ```{r}
 #| code-fold: true
-#| output: true
+#| output: true 
 head(data) %>%
   kable()
 ```

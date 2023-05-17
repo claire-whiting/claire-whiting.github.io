@@ -6,3 +6,10 @@ freeze: true
 
 # Enable banner style title blocks
 title-block-banner: true
+
+format:
+  html:
+    page-layout: full
+    theme: post_style.css
+    mainfont: Poppins
+    toc: true
