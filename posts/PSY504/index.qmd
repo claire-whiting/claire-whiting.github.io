@@ -34,7 +34,7 @@ website:
 
 ### Intro
 
-Here, I'll provide a walkthrough of a mediation analysis, along with some initial statistical tests. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success.
+Here, I'll provide a walkthrough of a mediation analysis, along with some initial statistical tests. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success. </span>
 
 These are the 4 questions we wanted to test:
 
@@ -69,7 +69,7 @@ data <- read_csv("data.csv")
 
 My data contains the following variables:
 
-I**D**: Participant ID
+**ID**: Participant ID
 
 **Condition**: 0 for control group, 1 for distanced group
 
@@ -80,6 +80,8 @@ I**D**: Participant ID
 **affect_change**: Change in affect from pre- to post-reappraisal
 
 **WC**: Total word count for reappraisal response
+
+Here are the first 6 participants in the dataset:
 
 ```{r}
 #| code-fold: true
@@ -150,7 +152,7 @@ cor.test(data$psychdist, data$affect_change) %>%
   report_table()
 ```
 
-These results show that there is a significant positive correlation between linguistic distancing and affect change, *p* < .001.
+These results show that there is a significant positive correlation between linguistic distancing and affect change, *p* \< .001.
 
 We can plot the correlation with a scatterplot, again using [ggplot]{style="color:blue;"}.
 
@@ -166,12 +168,24 @@ ggplot(data, aes(x=psychdist, y=affect_change)) + # Input variables
 
 ### Question 3. Does affect change differ by condition?
 
+We expected that the groups would differ on affect change - we hypothesized that the distanced group would show a greater affect change than the control group. To test this, we can use a t-test:
+
 ```{r}
 # Does affect change differ by condition?
 
 t.test(affect_change ~ Condition, data=data)
 
 ```
+
+```{r}
+#| code-fold: true
+#| output: true
+t.test(affect_change ~ Condition, data=data) %>%
+  report_table() %>%
+  summary()
+```
+
+There is actually no statistically significant difference between the two groups, *p* = .479. We can again visualize the two groups using a bar plot:
 
 ```{r}
 #| output: true
@@ -201,6 +215,8 @@ ggplot(affect_change_msd, aes(x=Condition, y=mean)) +
 
 ### Question 4. Does linguistic distancing mediate the association between condition and affect change?
 
+Now for the mediation analysis! First, lets standardize our continuous variables (linguistic distance and affect change) using the [datawizard]{style="color:blue;"} package. This will not change the significance of our results, but will provide standardized path estimates which can be more interpretable than non-standardized estimates.
+
 ```{r}
 # Create standardized variables
 data <- data %>% 
@@ -216,26 +232,61 @@ head(data) %>%
   kable()
 ```
 
+We now have two extra columns (affect_change_z and psychdist_z) which contain the standardized values of psychdist and affect_change, respectively.
+
+For the mediation, we will use the [mediation]{style="color:blue;"} package. We need to define **3** linear regression models:
+
+1.  Total Effect: DV \~ IV
+
+This will give us the the estimate for the **path c** or the **total effect**.
+
 ```{r}
-# Mediation analysis
-
 fit.totaleffect = lm(affect_change_z ~ Condition, data)
-summary(fit.totaleffect) 
-
-fit.mediator =  lm(psychdist_z ~ Condition, data)
-summary(fit.mediator) 
-
-fit.dv = lm(affect_change_z ~ Condition + psychdist_z, data)
-summary(fit.dv)
-
-set.seed(123)
-#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")
-#summary(results)
+summary(fit.totaleffect)$coefficients
 ```
 
+2.  Effect of IV on Mediator: M \~ IV
+
+This will give us the estimate for **path a**.
+
+```{r}
+fit.mediator =  lm(psychdist_z ~ Condition, data)
+summary(fit.mediator)$coefficients
+```
+
+3.  Effect of Mediator on DV, while controlling for IV: DV \~ IV + Mediator
+
+This will give us the estimate for the direct effect of the IV on the DV, as well as **path b** of the mediation model.
+
+```{r}
+fit.dv = lm(affect_change_z ~ Condition + psychdist_z, data)
+summary(fit.dv)$coefficients
+```
+
+Now, we can run the mediation analysis using the [mediatio]{style="color:blue;"} function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!
+
+```{r}
+set.seed(123)
+#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")
+```
+
+This gives us the following output:
+
+```{r}
+summary(results)
+```
+
+**ACME** stands for *average causal mediation effects*. This is the indirect, or mediation, effect of the IV on the DV. From this, we can see whether we have a significant mediation effect or not. Here, *p* \< .001, so we can conclude that linguistic distance does mediate the effect of Condition on affect change. Note that the mediation effect estimate = **path a** \* **path b,** the values of which we found previously (0.06 = 0.40 \* 0.15).
+
+**ADE** stands for *average direct effects*. This estimate is the effect of the IV on the DV, once we have controlled for the mediator. You can see that this estimate is equal to that found in **regression 3**.
+
+**Total Effect** equals the sum of the direct and indirect effects of the IV on the DV. This is what we found in **regression 1.**
+
+**Prop. Mediated** gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1 because the directions of the
+
 ```{r}
 
-# Exploring word count
+# Exloring word count
 
 t.test(WC ~ Condition, data=data) 
 cohensD(WC ~ Condition, data=data)

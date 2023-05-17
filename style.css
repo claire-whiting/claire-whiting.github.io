@@ -49,6 +49,7 @@ h3 {
 body {
   line-height: 1.7; // min 1.5 suggested for assistive tech
   font-size: 17px;
+  color: #3d3a3a;
 }
 
 /* CLASS SELECTORS (self-defined) */
