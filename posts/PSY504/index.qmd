@@ -236,34 +236,37 @@ We now have two extra columns (affect_change_z and psychdist_z) which contain th
 
 For the mediation, we will use the [mediation]{style="color:blue;"} package. We need to define **3** linear regression models:
 
-1.  Total Effect: DV \~ IV
+1.  **Total Effect: DV \~ IV**
 
 This will give us the the estimate for the **path c** or the **total effect**.
 
 ```{r}
+#| output: true
 fit.totaleffect = lm(affect_change_z ~ Condition, data)
 summary(fit.totaleffect)$coefficients
 ```
 
-2.  Effect of IV on Mediator: M \~ IV
+2.  **Effect of IV on Mediator: M \~ IV**
 
 This will give us the estimate for **path a**.
 
 ```{r}
+#| output: true
 fit.mediator =  lm(psychdist_z ~ Condition, data)
 summary(fit.mediator)$coefficients
 ```
 
-3.  Effect of Mediator on DV, while controlling for IV: DV \~ IV + Mediator
+3.  **Effect of Mediator on DV, while controlling for IV: DV \~ IV + Mediator**
 
 This will give us the estimate for the direct effect of the IV on the DV, as well as **path b** of the mediation model.
 
 ```{r}
+#| output: true
 fit.dv = lm(affect_change_z ~ Condition + psychdist_z, data)
 summary(fit.dv)$coefficients
 ```
 
-Now, we can run the mediation analysis using the [mediatio]{style="color:blue;"} function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!
+Now, we can run the mediation analysis using the [mediation]{style="color:blue;"} function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!
 
 ```{r}
 set.seed(123)
@@ -282,14 +285,27 @@ This gives us the following output:
 
 **Total Effect** equals the sum of the direct and indirect effects of the IV on the DV. This is what we found in **regression 1.**
 
-**Prop. Mediated** gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1 because the directions of the
+**Prop. Mediated** gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1. This indicates that the size of the mediation effect is larger than the total.
+
+### Interpretation
+
+We can conclude that linguistic distance does act as a mediator of the association between condition (control or distanced) and pre- to post-reappraisal affect change. The distancing manipulation increases linguistic distance, and this is associated with greater affect change.
+
+The results of this particular analysis are a little confusing: how can we have a significant mediation effect without a total effect? One reason for this may be an unmeasured variable acting as a mediator in the opposite direction. For example, maybe the distanced group are writing more during their reappraisal and experiencing the scenario more vividly, making it harder to reduce their negative affect. Using our WC (word count) variable, we can test whether word count differs by condition:
 
 ```{r}
+t.test(WC ~ Condition, data=data) %>% 
+  report_table() %>%
+  summary()
+```
 
-# Exloring word count
+These results indicate that word count is indeed higher for the distanced group than the control group, *p* \< .001. But does word count interact with condition to predict affect change?
 
-t.test(WC ~ Condition, data=data) 
-cohensD(WC ~ Condition, data=data)
-summary(lm(affect_change ~ WC*Condition, data=data)) 
+```{r}
+summary(lm(affect_change ~ WC*Condition, data=data))$coefficients
 
 ```
+
+No! There is no significant interaction effect between word count and condition. (And, we can see that actually the greater the word count, the greater the affect change. So it would definitely not be acting as an opposing mediator in this situation).
+
+We have answered the 4 research questions outlined in the Intro, but these results open up even more questions. In reality, it is unlikely that there will be a simple mediation model where only one mediator fully mediates the association between your IV and DV. It is really important to think about other potential mediators, as well as confounders in your study. In the case of mediation, study design is key - ideally, randomized controlled trials should be carried out.
