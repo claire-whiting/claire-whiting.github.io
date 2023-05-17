@@ -1,5 +1,6 @@
 ---
 title: "PSY504"
+descripton: "A guide to mediation analysis in R."
 author: "Claire Whiting"
 date: "2023-05-16"
 categories: [R]
@@ -29,7 +30,7 @@ website:
         href: mailto:claire.whiting@princeton.edu
 ---
 
-This is the first post in a Quarto blog. Welcome!
+A Guide to Mediation Analysis in R
 
 ![](thumbnail.jpg)
 

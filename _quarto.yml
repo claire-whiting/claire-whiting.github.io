@@ -12,10 +12,6 @@ website:
       - text: CV
         file: cv.pdf
       - posts.qmd
-      - icon: github
-        href: https://github.com/claire-whiting
-      - icon: twitter
-        href: https://twitter.com/claire_whiting
   page-footer: 
     background: light
     left: 
