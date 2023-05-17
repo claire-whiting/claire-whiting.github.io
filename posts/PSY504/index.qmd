@@ -94,27 +94,27 @@ cohensD(psychdist ~ Condition, data=data)
 
 ```{r}
 #| output: true
-lingdist_msd <- data %>%     # Mean, sd, se, CI_lower, CI_upper
+lingdist_msd <- data %>%
   dplyr::select(ID, Condition, psychdist) %>%
-  na.omit() %>%
+  na.omit() %>% # Remove any missing values
   group_by(Condition) %>%
-  summarize(mean = mean(psychdist),
-            sd = sd(psychdist),
-            se = sd / sqrt(n()),
-            CI_lower = mean - (1.96 * se),
-            CI_upper = mean + (1.96 * se)) %>%
+  summarize(mean = mean(psychdist), # Mean
+            sd = sd(psychdist), # Standard deviation
+            se = sd / sqrt(n()), # Standard error
+            CI_lower = mean - (1.96 * se), # Lower CI bound
+            CI_upper = mean + (1.96 * se)) %>% # Upper CI bound
   mutate(Condition = as.factor(Condition))
 
 
-ggplot(lingdist_msd, aes(x=Condition, y=mean)) + 
-  geom_bar(position=position_dodge(), stat="identity",
+ggplot(lingdist_msd, aes(x=Condition, y=mean)) + # Input variables
+  geom_bar(position=position_dodge(), stat="identity", # Add bars
            fill="#4b5e9c") +
-  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) +
+  geom_errorbar(aes(ymin=CI_lower, ymax=CI_upper), width=.2) + # Add error bars
   scale_x_discrete(labels=c('Control', 
-                            'Distanced')) +
-  coord_cartesian(ylim=c(-0.2, 0.2)) +
-  ylab("Mean Linguistic Distance") + xlab("") +
-  theme_light(base_size=20)
+                            'Distanced')) + # Rename x axis labels
+  coord_cartesian(ylim=c(-0.2, 0.2)) + # Set y axis limits
+  ylab("Mean Linguistic Distance") + xlab("") + # Set axes labels
+  theme_light(base_size=20) # Set plot theme and font size
 ```
 
 ### Question 2. Is linguistic distancing correlated with affect change?
@@ -145,7 +145,7 @@ t.test(affect_change ~ Condition, data=data)
 #| #| code-fold: true
 affect_change_msd <- data %>%
   dplyr::select(ID, Condition, affect_change) %>%
-  rename(Change = affect_change) %>%    # Mean, sd, se, CI_lower, CI_upper
+  rename(Change = affect_change) %>%
   group_by(Condition) %>%
   summarize(mean = mean(Change),
             sd = sd(Change),
