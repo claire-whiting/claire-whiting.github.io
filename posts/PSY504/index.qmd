@@ -34,7 +34,7 @@ website:
 
 ### Intro
 
-Here, I'll provide a walkthrough of the analyses I ran for a mediation study. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success. See [osf.io/5pvfh](https://osf.io/5pvfh) for more details.
+Here, I'll provide a walkthrough of the analyses I ran for a mediation study. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. (*Please note that the data in this example has been simulated from the real data using the* [faux]{style="color:blue;"} *package in R)* Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Linguistic distancing was computed using the LIWC software. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success. See [osf.io/5pvfh](https://osf.io/5pvfh) for more details.
 
 These are the 4 questions we wanted to test:
 
@@ -77,8 +77,6 @@ My data contains the following variables:
 **ID**: Participant ID
 
 **Condition**: 0 for control group, 1 for distanced group
-
-**Duration_minutes**: Number of minutes taken to complete task
 
 **psychdist**: Score for linguistic distance
 
@@ -276,7 +274,8 @@ Now, we can run the mediation analysis using the [mediation]{style="color:blue;"
 
 ```{r}
 set.seed(123)
-results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")
+results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z',
+                             sims = 10000, boot=T, boot.ci.type = "bca")
 ```
 
 This gives us the following output:
