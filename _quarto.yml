@@ -11,7 +11,8 @@ website:
         text: Home
       - text: CV
         file: cv.pdf
-      - posts.qmd
+      - href: posts.qmd
+        text: Resources
   page-footer: 
     background: light
     left: 
