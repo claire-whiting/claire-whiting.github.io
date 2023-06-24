@@ -16,7 +16,8 @@ website:
         text: Home
       - text: CV
         file: cv.pdf
-      - posts.qmd
+      - href: posts.qmd
+        text: Resources
       - icon: github
         href: https://github.com/claire-whiting
       - icon: twitter
@@ -34,7 +35,7 @@ website:
 
 ### Deciding whether to pursue a PhD
 
-Enjoying research is the single criteria I would suggest to those thinking about PhD study.
+Do you **enjoy** research? This is the most important question I would pose to those thinking about PhD study.
 
 Traditionally, PhD study was primarily a prerequisite for post-doctoral and faculty positions in universities. There is now increasing recognition of the value that PhD graduates bring outside of academia. So, you shouldn't feel that completing a PhD means you have to pursue a career as an academic professor/researcher. There are tons of industry positions that want the research skills of a Psychology PhD graduate (e.g., user experience research, scientific consultancy). You also don't need to know what you're going to do post-PhD. Career interests may change throughout your studies and this is ok! The skills you gain through a PhD are undoubtedly useful and can be applied to many settings.
 
