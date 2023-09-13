@@ -34,16 +34,16 @@ website:
 
 ### Intro
 
-Here, I'll provide a walkthrough of a mediation analysis, along with some initial statistical tests. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success. </span>
+Here, I'll provide a walkthrough of the analyses I ran for a mediation study. This example uses data from a study examining the effects of a linguistic distancing manipulation on reappraisal efficacy in a sample of adolescents. (*Please note that the data in this example has been simulated from the real data using the* [faux]{style="color:blue;"} *package in R)* Participants were randomized into control and distanced groups before completing a cognitive reappraisal exercise. The distanced group were instructed to avoid using the word "I" and the present tense, while the control group received no specific instructions. Linguistic distancing was computed using the LIWC software. Affect was measured both pre- and post-reappraisal on a sliding scale from Very Bad (-100) to Very Good (100). The pre-post change in affect was used as our outcome measure of reappraisal success. See [osf.io/5pvfh](https://osf.io/5pvfh) for more details.
 
 These are the 4 questions we wanted to test:
 
 1.  Does linguistic distancing differ by condition?
 2.  Is linguistic distancing correlated with affect change?
 3.  Does affect change differ by condition?
-4.  Does linguistic distancing mediate the association between condition and affect change?
+4.  Does linguistic distancing mediate the association between condition and affect change? (see figure below)
 
-\[image of mediation model\]
+![](mediation.png){fig-align="center" width="80%"}
 
 ### Environment set-up
 
@@ -61,6 +61,11 @@ library(kableExtra) # For nice tables
 library(ggplot2) # For nice plots
 ```
 
+```{r}
+#| code-fold: true
+options(scipen=999, digits=3)
+```
+
 Next, load in your data.
 
 ```{r}
@@ -72,8 +77,6 @@ My data contains the following variables:
 **ID**: Participant ID
 
 **Condition**: 0 for control group, 1 for distanced group
-
-**Duration_minutes**: Number of minutes taken to complete task
 
 **psychdist**: Score for linguistic distance
 
@@ -236,44 +239,50 @@ We now have two extra columns (affect_change_z and psychdist_z) which contain th
 
 For the mediation, we will use the [mediation]{style="color:blue;"} package. We need to define **3** linear regression models:
 
-1.  Total Effect: DV \~ IV
+1.  **Total Effect: DV \~ IV**
 
-This will give us the the estimate for the **path c** or the **total effect**.
+This will give us the the estimate for **path c** i.e., the **total effect**.
 
 ```{r}
+#| output: true
 fit.totaleffect = lm(affect_change_z ~ Condition, data)
 summary(fit.totaleffect)$coefficients
 ```
 
-2.  Effect of IV on Mediator: M \~ IV
+2.  **Effect of IV on Mediator: M \~ IV**
 
 This will give us the estimate for **path a**.
 
 ```{r}
+#| output: true
+options(digits=3)
 fit.mediator =  lm(psychdist_z ~ Condition, data)
 summary(fit.mediator)$coefficients
 ```
 
-3.  Effect of Mediator on DV, while controlling for IV: DV \~ IV + Mediator
+3.  **Effect of Mediator on DV, while controlling for IV: DV \~ IV + Mediator**
 
-This will give us the estimate for the direct effect of the IV on the DV, as well as **path b** of the mediation model.
+This will give us the estimate for the **direct effect** of the IV on the DV, as well as **path b** of the mediation model.
 
 ```{r}
+#| output: true
 fit.dv = lm(affect_change_z ~ Condition + psychdist_z, data)
 summary(fit.dv)$coefficients
 ```
 
-Now, we can run the mediation analysis using the [mediatio]{style="color:blue;"} function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!
+Now, we can run the mediation analysis using the [mediation]{style="color:blue;"} function. We need to specify the model for the mediator (regression 2), the model for outcome (regression 3), the treatment variables (Condition) and the mediator (psychdist_z). Then we specify how many bootstrap samples we want and the type of confidence interval we want. Here I have used 10,000 samples with bias-corrected and accelerated (BCa) confidence intervals. Make sure you set a seed before running so that you can get reproducible results each time!
 
 ```{r}
 set.seed(123)
-#results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z', sims = 10000, boot=T, boot.ci.type = "bca")
+results = mediation::mediate(fit.mediator, fit.dv, treat='Condition', mediator='psychdist_z',
+                             sims = 10000, boot=T, boot.ci.type = "bca")
 ```
 
 This gives us the following output:
 
 ```{r}
-#summary(results)
+#| output: true
+summary(results)
 ```
 
 **ACME** stands for *average causal mediation effects*. This is the indirect, or mediation, effect of the IV on the DV. From this, we can see whether we have a significant mediation effect or not. Here, *p* \< .001, so we can conclude that linguistic distance does mediate the effect of Condition on affect change. Note that the mediation effect estimate = **path a** \* **path b,** the values of which we found previously (0.06 = 0.40 \* 0.15).
@@ -282,14 +291,33 @@ This gives us the following output:
 
 **Total Effect** equals the sum of the direct and indirect effects of the IV on the DV. This is what we found in **regression 1.**
 
-**Prop. Mediated** gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1 because the directions of the
+**Prop. Mediated** gives the size of the average causal mediation effects relative to the total effect. In this case, we get a value greater than 1. This indicates that the size of the mediation effect is larger than the total.
+
+### Interpretation
+
+We can conclude that linguistic distance does act as a mediator of the association between condition (control or distanced) and pre- to post-reappraisal affect change. The distancing manipulation increases linguistic distance, and this is associated with greater affect change. Here is our final mediation model:
+
+![](mediation_paths.png){fig-align="center" width="80%"}
+
+The results of this particular analysis are a little confusing: how can we have a significant mediation effect without a total effect? One reason for this may be an unmeasured variable acting as a mediator in the opposite direction. For example, maybe the distanced group are writing more during their reappraisal and experiencing the scenario more vividly, making it harder to reduce their negative affect. Using our WC (word count) variable, we can test whether word count differs by condition using a t-test:
 
 ```{r}
+#| code-fold: true
+#| output: true
+t.test(WC ~ Condition, data=data) %>% 
+  report_table() %>%
+  summary()
+```
 
-# Exloring word count
+These results indicate that word count is indeed higher for the distanced group than the control group, *p* \< .001. But does word count interact with condition to predict affect change? We can run a regression model including the WC\*Condition interaction term to test this:
 
-t.test(WC ~ Condition, data=data) 
-cohensD(WC ~ Condition, data=data)
-summary(lm(affect_change ~ WC*Condition, data=data)) 
+```{r}
+#| code-fold: true
+#| output: true
+summary(lm(affect_change ~ WC*Condition, data=data))$coefficients
 
 ```
+
+No! There is no significant interaction effect between word count and condition. (And, we can see that actually the greater the word count, the greater the affect change. So it would definitely not be acting as an opposing mediator in this situation).
+
+We have answered the 4 research questions outlined in the Intro, but the interpretation of the mediation results remains uncertain and opens up even more questions. In reality, it is unlikely that there will be a straightforward mediation of an effect, where one mediator fully mediates the association between your IV and DV. It is important to think about other potential mediators, as well as confounders in your study, when carrying out this kind of analysis. Study design is key - ideally, randomized controlled trials should be carried out before running a mediation model.
