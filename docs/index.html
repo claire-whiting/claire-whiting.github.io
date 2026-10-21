@@ -41,10 +41,25 @@
       </figure>
     </div>
 
-    <div class="demo" aria-labelledby="demo-title">
-      <p class="demo-caption" id="demo-title">Linguistic distancing means describing an experience with fewer first-person, present-tense words, as if seen from further away. My research asks whether this shift helps people regulate emotion or simply accompanies it.</p>
-      <p class="demo-sentence" id="demo-sentence" aria-live="polite"></p>
-      <button type="button" id="demo-toggle" aria-pressed="false">Distance this sentence</button>
+    <div class="demos">
+      <div class="demo" aria-labelledby="demo-distance-title"
+           data-before="&lt;mark&gt;I can’t&lt;/mark&gt; stop thinking about what &lt;mark&gt;I said&lt;/mark&gt; to them."
+           data-after="&lt;mark&gt;She couldn’t&lt;/mark&gt; stop thinking about what &lt;mark&gt;she had said&lt;/mark&gt; to them."
+           data-action="Distance this sentence">
+        <h3 class="demo-title" id="demo-distance-title">Linguistic distancing</h3>
+        <p class="demo-caption">Describing an experience with fewer first-person, present-tense words, as if seen from further away. My research asks whether this shift helps people regulate emotion or simply accompanies it.</p>
+        <p class="demo-sentence" aria-live="polite"></p>
+        <button type="button" aria-pressed="false"></button>
+      </div>
+      <div class="demo" aria-labelledby="demo-diff-title"
+           data-before="I feel &lt;mark&gt;bad&lt;/mark&gt; about how the meeting went."
+           data-after="I feel &lt;mark&gt;embarrassed&lt;/mark&gt;, and a little &lt;mark&gt;resentful&lt;/mark&gt;, about how the meeting went."
+           data-action="Make it specific">
+        <h3 class="demo-title" id="demo-diff-title">Emotion differentiation</h3>
+        <p class="demo-caption">Describing feelings in precise, distinct terms rather than broad ones like “bad” or “stressed”. My systematic review examines how this specificity relates to regulating emotions.</p>
+        <p class="demo-sentence" aria-live="polite"></p>
+        <button type="button" aria-pressed="false"></button>
+      </div>
     </div>
 
     <section id="research" aria-labelledby="research-h">
@@ -123,20 +138,18 @@
   </footer>
 
   <script>
-    (function () {
-      var immersed = '<mark>I can’t</mark> stop thinking about what <mark>I said</mark> to them.';
-      var distanced = '<mark>She couldn’t</mark> stop thinking about what <mark>she had said</mark> to them.';
-      var el = document.getElementById('demo-sentence');
-      var btn = document.getElementById('demo-toggle');
-      var isDistanced = false;
+    document.querySelectorAll('.demo').forEach(function (demo) {
+      var el = demo.querySelector('.demo-sentence');
+      var btn = demo.querySelector('button');
+      var changed = false;
       function render() {
-        el.innerHTML = isDistanced ? distanced : immersed;
-        btn.textContent = isDistanced ? 'Show the original' : 'Distance this sentence';
-        btn.setAttribute('aria-pressed', String(isDistanced));
+        el.innerHTML = changed ? demo.dataset.after : demo.dataset.before;
+        btn.textContent = changed ? 'Show the original' : demo.dataset.action;
+        btn.setAttribute('aria-pressed', String(changed));
       }
-      btn.addEventListener('click', function () { isDistanced = !isDistanced; render(); });
+      btn.addEventListener('click', function () { changed = !changed; render(); });
       render();
-    })();
+    });
   </script>
 </body>
 </html>
