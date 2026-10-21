@@ -116,6 +116,19 @@ h3 { font: 600 1.0625rem/1.35 var(--sans); margin: 0 0 0.35rem; }
 .topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 3rem; }
 .topics p { margin: 0; }
 
+.feature {
+  background: var(--spruce);
+  color: var(--paper);
+  padding: 2rem 2.25rem;
+  border-radius: 3px;
+  margin: 0 0 2.5rem;
+}
+.feature h3 { font-size: 1.375rem; margin-bottom: 0.75rem; }
+.feature p { max-width: var(--measure); margin: 0 0 0.9rem; }
+.feature p:last-child { margin-bottom: 0; }
+.feature a { color: var(--paper); font-family: var(--sans); font-weight: 500; }
+.feature a:hover { color: var(--surface); }
+
 .pubs { list-style: none; padding: 0; margin: 0; max-width: 48rem; }
 .pubs li { padding-left: 1.5rem; text-indent: -1.5rem; margin-bottom: 1.1rem; }
 .pubs .status { color: var(--muted); }
